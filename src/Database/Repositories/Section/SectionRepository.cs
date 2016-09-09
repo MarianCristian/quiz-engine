@@ -44,6 +44,11 @@ namespace Qubiz.QuizEngine.Database.Repositories
             return section;
         }
 
+        public void Foo()
+        {
+
+        }
+
         public void Create(Contract.Section section)
         {
             dbSet.Add(section.DeepCopyTo<Section>());
