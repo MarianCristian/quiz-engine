@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Qubiz.QuizEngine.Database.Repositories.Contract;
+
 namespace Qubiz.QuizEngine.Services
 {
     public class QuestionService : IQuestionService
@@ -100,7 +102,7 @@ namespace Qubiz.QuizEngine.Services
 
                 var questionsFiltered = questions.Select(q => new { ID = q.ID, Number = q.Number, SectionID = q.SectionID }).ToArray();
 
-                IEnumerable<Qubiz.QuizEngine.Database.Entities.Section> sections = await unitOfWork.SectionRepository.ListAsync();
+                IEnumerable<Section> sections = await unitOfWork.SectionRepository.ListAsync();
 
                 return new PagedResult<QuestionListItem>
                 {
@@ -108,7 +110,7 @@ namespace Qubiz.QuizEngine.Services
                     {
                         ID = q.ID,
                         Number = q.Number,
-                        Section = (sections.SingleOrDefault(s => s.ID == q.SectionID) ?? new Qubiz.QuizEngine.Database.Entities.Section { Name = string.Empty }).Name
+                        Section = (sections.SingleOrDefault(s => s.ID == q.SectionID) ?? new Section { Name = string.Empty }).Name
                     }).ToArray(),
                     TotalCount = questionsFiltered.Count()
                 };

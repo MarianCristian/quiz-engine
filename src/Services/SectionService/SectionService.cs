@@ -1,5 +1,4 @@
-﻿using Qubiz.QuizEngine.Database.Entities;
-using Qubiz.QuizEngine.Database.Repositories;
+﻿using Qubiz.QuizEngine.Database.Repositories;
 using Qubiz.QuizEngine.Database;
 using Qubiz.QuizEngine.Infrastructure;
 using System;
@@ -20,7 +19,8 @@ namespace Qubiz.QuizEngine.Services.SectionService
         {
             using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
             {
-                Section section = await unitOfWork.SectionRepository.GetByIDAsync(id);
+                Database.Repositories.Contract.Section section = await unitOfWork.SectionRepository.GetByIDAsync(id);
+      
                 if (section == null)
                     return new ValidationError[1] { new ValidationError() { Message = "Deletion failed! There is no Section instance with this ID!" } };
 
@@ -32,23 +32,29 @@ namespace Qubiz.QuizEngine.Services.SectionService
             }
         }
 
-        public async Task<Section[]> GetAllSectionsAsync()
+        public async Task<Contract.Section[]> GetAllSectionsAsync()
         {
             using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
             {
-                return await unitOfWork.SectionRepository.ListAsync();
+                Database.Repositories.Contract.Section[] dbSections = await unitOfWork.SectionRepository.ListAsync();
+
+                Contract.Section[] sections = dbSections.DeepCopyTo<Contract.Section[]>();
+
+                return sections;
             }
         }
 
-        public async Task<ValidationError[]> AddSectionAsync(Section section)
+        public async Task<ValidationError[]> AddSectionAsync(Contract.Section section)
         {
             using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
             {
-                Section dbSection = await unitOfWork.SectionRepository.GetByNameAsync(section.Name);
+                Database.Repositories.Contract.Section dbSection = await unitOfWork.SectionRepository.GetByNameAsync(section.DeepCopyTo<Database.Repositories.Contract.Section>().Name);
                 if (dbSection == null)
                 {
-                    unitOfWork.SectionRepository.Create(section);
+                    unitOfWork.SectionRepository.Create(section.DeepCopyTo<Database.Repositories.Contract.Section>());
+
                     await unitOfWork.SaveAsync();
+
                     return new ValidationError[0];
                 }
 
@@ -56,11 +62,11 @@ namespace Qubiz.QuizEngine.Services.SectionService
             }
         }
 
-        public async Task<ValidationError[]> UpdateSectionAsync(Section section)
+        public async Task<ValidationError[]> UpdateSectionAsync(Contract.Section section)
         {
             using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
             {
-                Section dbSection = await unitOfWork.SectionRepository.GetByNameAsync(section.Name);
+                Database.Repositories.Contract.Section dbSection = await unitOfWork.SectionRepository.GetByNameAsync(section.DeepCopyTo<Database.Repositories.Contract.Section>().Name);
                 if (dbSection != null && dbSection.ID != section.ID)
                     return new ValidationError[1] { new ValidationError() { Message = "Update failed! There is no Section instance with this ID!" } };
 
@@ -76,11 +82,14 @@ namespace Qubiz.QuizEngine.Services.SectionService
             }
         }
 
-        public async Task<Section> GetSectionAsync(Guid id)
+        public async Task<Contract.Section> GetSectionAsync(Guid id)
         {
             using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
             {
-                return await unitOfWork.SectionRepository.GetByIDAsync(id);
+                Database.Repositories.Contract.Section dbSection = await unitOfWork.SectionRepository.GetByIDAsync(id);
+                Contract.Section section = dbSection.DeepCopyTo<Contract.Section>();
+
+                return section;
             }
         }
     }

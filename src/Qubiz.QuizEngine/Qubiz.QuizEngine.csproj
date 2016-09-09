@@ -170,6 +170,7 @@
     <Compile Include="CacheModels.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Areas\M\Controllers\Api\Contract\Section.cs" />
     <Compile Include="Controllers\ExamController.cs" />
     <Compile Include="Controllers\FeatureFlagController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
