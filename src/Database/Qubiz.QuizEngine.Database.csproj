@@ -95,7 +95,7 @@
     <Compile Include="Repositories\Question\IQuestionRepository.cs" />
     <Compile Include="Repositories\Question\QuestionRepository.cs" />
     <Compile Include="Repositories\Section\ISectionRepository.cs" />
-    <Compile Include="Repositories\Section\Contract\SectionRepository.cs" />
+    <Compile Include="Repositories\Section\SectionRepository.cs" />
     <Compile Include="Repositories\Test\ITestQuestionRepository.cs" />
     <Compile Include="Repositories\Test\ITestSectionRepository.cs" />
     <Compile Include="Repositories\Test\ITestRepository.cs" />

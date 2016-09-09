@@ -46,7 +46,7 @@ namespace Qubiz.QuizEngine.Database.Repositories
 
         public void Foo()
         {
-
+            Console.WriteLine("TESTING THINGS");
         }
 
         public void Create(Contract.Section section)
