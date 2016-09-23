@@ -51,7 +51,6 @@
     <Compile Include="Option\Contract\OptionDefinition.cs" />
     <Compile Include="Common\Contract\PagedResult.cs" />
     <Compile Include="Question\Contract\QuestionDefinition.cs" />
-    <Compile Include="Question\Contract\QuestionDefinitionDetail.cs" />
     <Compile Include="Question\Contract\QuestionListItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Question\QuestionService.cs" />

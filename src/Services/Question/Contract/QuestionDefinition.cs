@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Qubiz.QuizEngine.Services.Option.Contract;
+using System;
 
 namespace Qubiz.QuizEngine.Services.Question.Contract
 {
-	public class QuestionDefinition
+	public class QuestionDetail
 	{
         public Guid ID { get; set; }
         
@@ -15,7 +16,9 @@ namespace Qubiz.QuizEngine.Services.Question.Contract
         public QuestionType Type { get; set; }
         
         public int Number { get; set; }
-    }
+
+		public OptionDefinition[] Options { get; set; }
+	}
 
     public enum QuestionType
     {
