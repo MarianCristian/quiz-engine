@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace Qubiz.QuizEngine.Services.Models
+namespace Qubiz.QuizEngine.Services.Question.Contract
 {
 	public class QuestionDefinition
 	{

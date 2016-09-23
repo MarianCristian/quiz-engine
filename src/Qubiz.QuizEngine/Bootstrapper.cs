@@ -5,6 +5,8 @@ using Qubiz.QuizEngine.Infrastructure;
 using Qubiz.QuizEngine.Infrastructure.Logger;
 using Qubiz.QuizEngine.Repositories;
 using Qubiz.QuizEngine.Services.AdminService;
+using Qubiz.QuizEngine.Services.Question;
+using Qubiz.QuizEngine.Services.Question.Contract;
 using Qubiz.QuizEngine.Services.SectionService;
 using Qubiz.QuizEngine.Services.SectionService.Contract;
 using System.Web.Http;
@@ -48,7 +50,7 @@ namespace Qubiz.QuizEngine
 
 			// M Area
 			container.RegisterType<IUnitOfWorkFactory, UnitOfWorkFactory>();
-			container.RegisterType<Services.IQuestionService, Services.QuestionService>();
+			container.RegisterType<IQuestionService, QuestionService>();
 			container.RegisterType<IAdminService, AdminService>();
 			container.RegisterType<ISectionService, SectionService>();
 		}

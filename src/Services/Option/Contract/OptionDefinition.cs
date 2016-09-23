@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Qubiz.QuizEngine.Services.Models
+namespace Qubiz.QuizEngine.Services.Option.Contract
 {
     public class OptionDefinition
     {

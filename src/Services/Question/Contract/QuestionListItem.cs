@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Qubiz.QuizEngine.Services.Models
+namespace Qubiz.QuizEngine.Services.Question.Contract
 {
 	public class QuestionListItem
     {

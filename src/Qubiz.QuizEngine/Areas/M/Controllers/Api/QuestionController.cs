@@ -1,6 +1,6 @@
 ﻿using Qubiz.QuizEngine.Areas.M.Models;
 using Qubiz.QuizEngine.Infrastructure;
-using Qubiz.QuizEngine.Services;
+using Qubiz.QuizEngine.Services.Question.Contract;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -21,7 +21,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		[HttpGet]
 		public async Task<IHttpActionResult> Get(int pageNumber, int itemsPerPage)
 		{
-			Qubiz.QuizEngine.Services.Models.PagedResult<Qubiz.QuizEngine.Services.Models.QuestionListItem> questions = await questionService.GetQuestionsByPageAsync(pageNumber, itemsPerPage);
+			Qubiz.QuizEngine.Services.Common.Contract.PagedResult<Qubiz.QuizEngine.Services.Question.Contract.QuestionListItem> questions = await questionService.GetQuestionsByPageAsync(pageNumber, itemsPerPage);
 			if (questions.Items == null && questions.TotalCount == 0)
 			{
 				HttpResponseMessage message = new HttpResponseMessage();
@@ -34,7 +34,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		[HttpGet]
 		public async Task<IHttpActionResult> Get(Guid id)
 		{
-			Qubiz.QuizEngine.Services.Models.QuestionDetail question = await questionService.GetQuestionByID(id);
+			Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail question = await questionService.GetQuestionByID(id);
 
 			return Ok(question.DeepCopyTo<Question>());
 		}
@@ -42,7 +42,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		[HttpPut]
 		public async Task<IHttpActionResult> Put(Question question)
 		{
-			ValidationError[] errors = await questionService.UpdateQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			ValidationError[] errors = await questionService.UpdateQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail>());
 			string errorMessage = String.Empty;
 			if (errors.Any())
 			{
@@ -64,7 +64,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		[HttpPost]
 		public async Task<IHttpActionResult> Post(Question question)
 		{
-			ValidationError[] errors = await questionService.AddQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			ValidationError[] errors = await questionService.AddQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail>());
 			string errorMessage = String.Empty;
 			if (errors.Any())
 			{
