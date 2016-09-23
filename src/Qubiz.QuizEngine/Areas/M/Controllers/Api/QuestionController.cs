@@ -2,6 +2,8 @@
 using Qubiz.QuizEngine.Infrastructure;
 using Qubiz.QuizEngine.Services;
 using System;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -19,28 +21,65 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		[HttpGet]
 		public async Task<IHttpActionResult> Get(int pageNumber, int itemsPerPage)
 		{
-			Qubiz.QuizEngine.Services.Models.PagedResult<Qubiz.QuizEngine.Services.Models.QuestionListItem> question = await questionService.GetQuestionsByPageAsync(pageNumber, itemsPerPage);
-			return Ok(question.DeepCopyTo<QuestionPaged>());
+			Qubiz.QuizEngine.Services.Models.PagedResult<Qubiz.QuizEngine.Services.Models.QuestionListItem> questions = await questionService.GetQuestionsByPageAsync(pageNumber, itemsPerPage);
+			if (questions.Items == null && questions.TotalCount == 0)
+			{
+				HttpResponseMessage message = new HttpResponseMessage();
+				message.StatusCode = System.Net.HttpStatusCode.NoContent;
+				return ResponseMessage(message);
+			}
+			return Ok(questions.DeepCopyTo<QuestionPaged>());
 		}
 
 		[HttpGet]
 		public async Task<IHttpActionResult> Get(Guid id)
 		{
 			Qubiz.QuizEngine.Services.Models.QuestionDetail question = await questionService.GetQuestionByID(id);
+
 			return Ok(question.DeepCopyTo<Question>());
 		}
 
 		[HttpPut]
 		public async Task<IHttpActionResult> Put(Question question)
 		{
-			await questionService.UpdateQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			ValidationError[] errors = await questionService.UpdateQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			string errorMessage = String.Empty;
+			if (errors.Any())
+			{
+				if (errors.Length > 1)
+				{
+					foreach (ValidationError error in errors)
+					{
+						errorMessage += error.Message + ", ";
+					}
+					return BadRequest(errorMessage);
+				}
+
+				return BadRequest(errors[0].Message);
+			}
+
 			return Ok();
 		}
 
 		[HttpPost]
 		public async Task<IHttpActionResult> Post(Question question)
 		{
-			await questionService.AddQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			ValidationError[] errors = await questionService.AddQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Services.Models.QuestionDetail>());
+			string errorMessage = String.Empty;
+			if (errors.Any())
+			{
+				if (errors.Length > 1)
+				{
+					foreach (ValidationError error in errors)
+					{
+						errorMessage += error.Message + ", ";
+					}
+					return BadRequest(errorMessage);
+				}
+
+				return BadRequest(errors[0].Message);
+			}
+
 			return Ok();
 		}
 
@@ -48,6 +87,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		public async Task<IHttpActionResult> Delete(Guid id)
 		{
 			await questionService.DeleteQuestionAsync(id);
+
 			return Ok();
 		}
 	}
