@@ -6,8 +6,8 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question.Contract
 {
 	public interface IQuestionRepository
     {
-        Task AddQuestionAsync(QuestionDefinition question);
-        Task UpdateQuestionAsync(QuestionDefinition question);
+        void AddQuestionAsync(QuestionDefinition question);
+        void UpdateQuestionAsync(QuestionDefinition question);
 
         Task DeleteQuestionAsync(Guid id);
 
