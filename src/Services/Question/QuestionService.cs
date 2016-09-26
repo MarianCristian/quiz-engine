@@ -24,7 +24,7 @@ namespace Qubiz.QuizEngine.Services.Question
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
 				await unitOfWork.QuestionRepository.DeleteQuestionAsync(id);
-				IEnumerable<Database.Models.OptionDefinition> options = await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(id);
+				IEnumerable<Qubiz.QuizEngine.Database.Models.OptionDefinition> options = await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(id);
 				unitOfWork.OptionRepository.DeleteOptionsAsync(options.ToArray());
 				await unitOfWork.SaveAsync();
 			}
@@ -34,18 +34,23 @@ namespace Qubiz.QuizEngine.Services.Question
 		{
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
-				//List<Database.Models.QuestionDefinition> list = new List<Database.Models.QuestionDefinition>();
 				QuestionDetail question = (await unitOfWork.QuestionRepository.GetQuestionByIDAsync(id)).DeepCopyTo<QuestionDetail>();
-				IEnumerable<Database.Models.OptionDefinition> options = await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(id);
-				question.Options = options.Select(o => new OptionDefinition
+
+				IEnumerable<OptionDefinition> options = (await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(id)).DeepCopyTo<OptionDefinition[]>();
+
+				if (question != null)
 				{
-					Answer = o.Answer,
-					ID = o.ID,
-					IsCorrectAnswer = o.IsCorrectAnswer,
-					Order = o.Order,
-					QuestionID = o.QuestionID
-				}).ToArray();
-				return question;
+					question.Options = options.Select(o => new OptionDefinition
+					{
+						Answer = o.Answer,
+						ID = o.ID,
+						IsCorrectAnswer = o.IsCorrectAnswer,
+						Order = o.Order,
+						QuestionID = o.QuestionID
+					}).ToArray();
+					return question;
+				}
+				return null;
 			}
 		}
 
@@ -54,7 +59,7 @@ namespace Qubiz.QuizEngine.Services.Question
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
 				if (question.QuestionText.Equals(String.Empty))
-					return new ValidationError[1] { new ValidationError { Message = "Question text can't be empty" } };
+					return new ValidationError[1] { new ValidationError { Message = "Question text can't be empty !" } };
 
 				if (question.Options.Length < 3)
 					return new ValidationError[1] { new ValidationError { Message = "Question must have at last 3 options !" } };
@@ -66,16 +71,18 @@ namespace Qubiz.QuizEngine.Services.Question
 				{
 					if (option.Answer.Equals(String.Empty))
 					{
-						return new ValidationError[1] { new ValidationError { Message = "Option answer can't be empty !" } };
+						return new ValidationError[1] { new ValidationError { Message = "Option answers can't be empty !" } };
 					}
 				}
 
 				if (!question.Options.Any(x => x.IsCorrectAnswer == true))
 					return new ValidationError[1] { new ValidationError { Message = "Options must have at last 1 correct answer !" } };
 
-				await unitOfWork.QuestionRepository.UpdateQuestionAsync(question.DeepCopyTo<Database.Models.QuestionDefinition>());
+				await unitOfWork.QuestionRepository.UpdateQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Database.Models.QuestionDefinition>());
+
 				unitOfWork.OptionRepository.DeleteOptionsAsync((await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(question.ID)).ToArray());
-				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Database.Models.OptionDefinition
+
+				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Qubiz.QuizEngine.Database.Models.OptionDefinition
 				{
 					Answer = o.Answer,
 					ID = o.ID,
@@ -94,7 +101,7 @@ namespace Qubiz.QuizEngine.Services.Question
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
 				if (question.QuestionText.Equals(String.Empty))
-					return new ValidationError[1] { new ValidationError { Message = "Question text can't be empty" } };
+					return new ValidationError[1] { new ValidationError { Message = "Question text can't be empty !" } };
 
 				if (question.Options.Length < 3)
 					return new ValidationError[1] { new ValidationError { Message = "Question must have at last 3 options !" } };
@@ -112,8 +119,8 @@ namespace Qubiz.QuizEngine.Services.Question
 				if (!question.Options.Any(x => x.IsCorrectAnswer == true))
 					return new ValidationError[1] { new ValidationError { Message = "Options must have at last 1 correct answer !" } };
 
-				await unitOfWork.QuestionRepository.AddQuestionAsync(question.DeepCopyTo<Database.Models.QuestionDefinition>());
-				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Database.Models.OptionDefinition
+				await unitOfWork.QuestionRepository.AddQuestionAsync(question.DeepCopyTo<Qubiz.QuizEngine.Database.Models.QuestionDefinition>());
+				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Qubiz.QuizEngine.Database.Models.OptionDefinition
 				{
 					Answer = o.Answer,
 					ID = o.ID,
@@ -130,7 +137,7 @@ namespace Qubiz.QuizEngine.Services.Question
 		{
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
-				IEnumerable<Database.Models.QuestionDefinition> questions = await unitOfWork.QuestionRepository.GetQuestionsAsync();
+				IEnumerable<QuestionDetail> questions = (await unitOfWork.QuestionRepository.GetQuestionsAsync()).DeepCopyTo<QuestionDetail[]>().ToArray();
 
 				if (pageNumber > questions.ToList().Count / itemsPerPage)
 				{

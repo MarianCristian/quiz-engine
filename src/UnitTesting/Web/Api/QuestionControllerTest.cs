@@ -9,6 +9,7 @@ using System.Web.Http.Results;
 using Qubiz.QuizEngine.Infrastructure;
 using Qubiz.QuizEngine.Areas.M.Models;
 using Qubiz.QuizEngine.Services.Question.Contract;
+using System.Net;
 
 namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 {
@@ -64,7 +65,7 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 		}
 
 		[TestMethod]
-		public async Task Get_WhenNoQuestionsMatchTheSearch_ThenNoQuestionsAreReturned()
+		public async Task Get_WhenNoQuestionsMatchTheSearch_ThenReturnNoContentStatusCode()
 		{
 			QuestionPaged questions = new QuestionPaged();
 
@@ -75,11 +76,10 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 
 			IHttpActionResult actionResult = await questionController.Get(2, 1);
 
-			QuestionPaged response = (actionResult as OkNegotiatedContentResult<QuestionPaged>).Content;
+			ResponseMessageResult response = (ResponseMessageResult)actionResult;
 
-			Assert.AreEqual(typeof(OkNegotiatedContentResult<QuestionPaged>), actionResult.GetType());
-			Assert.AreEqual(0, response.Items.Length);
-			Assert.AreEqual(0, response.TotalCount);
+			Assert.AreEqual(HttpStatusCode.NoContent, response.Response.StatusCode);
+			Assert.AreEqual(null, response.Response.Content);
 		}
 
 		[TestMethod]
@@ -112,7 +112,7 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 		}
 
 		[TestMethod]
-		public async Task Get_WhenNoQuestionMatchTheSearch_ThenReturnNull()
+		public async Task Get_WhenGettingByIdAndNoQuestionMatchTheSearch_ThenReturnNoContentStatusCode()
 		{
 			Guid questionId = Guid.NewGuid();
 
@@ -123,14 +123,14 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 
 			IHttpActionResult actionResult = await questionController.Get(questionId);
 
-			Question response = (actionResult as OkNegotiatedContentResult<Question>).Content;
+			ResponseMessageResult response = (ResponseMessageResult)actionResult;
 
-			Assert.AreEqual(typeof(OkNegotiatedContentResult<Question>), actionResult.GetType());
-			Assert.IsNull(response);
+			Assert.AreEqual(HttpStatusCode.NoContent, response.Response.StatusCode);
+			Assert.AreEqual(null, response.Response.Content);
 		}
 
 		[TestMethod]
-		public async Task Put_WhenUpdatingAnExistingQuestion_ThenOkStatusCodeIsReturned()
+		public async Task Put_WhenUpdatingAnExistingQuestionAndNoValidationErrorsAreReturned_ThenOkStatusCodeIsReturned()
 		{
 			Guid questionID = Guid.NewGuid();
 			Option[] options = new Option[]
@@ -148,13 +148,43 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 
 			questionServiceMock.Setup(x => x.UpdateQuestionAsync(It.Is<Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail>(s => (HaveEqualState(s, question))))).Returns(Task.FromResult(error));
 
-			IHttpActionResult actionResult = await questionController.Put(question.DeepCopyTo<Question>());
+			IHttpActionResult actionResult = await questionController.Put(question);
 
 			Assert.AreEqual(typeof(OkResult), actionResult.GetType());
 		}
 
 		[TestMethod]
-		public async Task Post_WhenAddingQuestion_ThenOkStatusCodeIsReturned()
+		public async Task Put_WhenUpdatingExistingQuestionAndValidationErrorsAreReturned_ThenReturnBadRequestStatusCode()
+		{
+			Guid questionID = Guid.NewGuid();
+			Option[] options = new Option[]
+			{
+
+				new Option {ID = Guid.NewGuid(), Answer = "This is a test", IsCorrectAnswer = true, Order =  1, QuestionID = questionID},
+				new Option {ID = Guid.NewGuid(), Answer = "This is a test 2", IsCorrectAnswer = false, Order =  2, QuestionID = questionID},
+			};
+			Question question = new Question { ID = questionID, Complexity = 1, Number = 1, QuestionText = "This is a test", SectionID = Guid.NewGuid(), Type = Areas.M.Models.QuestionType.SingleSelect, Options = options };
+
+			ValidationError[] errors = new ValidationError[] {
+				new ValidationError { Message = "This is a test!" },
+				new ValidationError { Message = "This is another Test!" }
+			};
+
+			questionController.Request = new HttpRequestMessage(HttpMethod.Put, "api/Question/");
+			questionController.Configuration = new HttpConfiguration();
+
+			questionServiceMock.Setup(x => x.UpdateQuestionAsync(It.Is<Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail>(s => (HaveEqualState(s, question))))).Returns(Task.FromResult(errors));
+
+			IHttpActionResult actionResult = await questionController.Put(question);
+
+			BadRequestErrorMessageResult response = (BadRequestErrorMessageResult)actionResult;
+
+			Assert.AreEqual(typeof(BadRequestErrorMessageResult), actionResult.GetType());
+			Assert.AreEqual("This is a test!, This is another Test!", response.Message);
+		}
+
+		[TestMethod]
+		public async Task Post_WhenAddingQuestionAndNoValidationErrorsAreReturned_ThenOkStatusCodeIsReturned()
 		{
 			Guid questionID = Guid.NewGuid();
 			Option[] options = new Option[]
@@ -175,6 +205,36 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 			IHttpActionResult actionResult = await questionController.Post(question.DeepCopyTo<Question>());
 
 			Assert.AreEqual(typeof(OkResult), actionResult.GetType());
+		}
+
+		[TestMethod]
+		public async Task Post_WhenAdingQuestionAndValidationErrorsAreReturned_ThenReturnBadRequestStatusCode()
+		{
+			Guid questionID = Guid.NewGuid();
+			Option[] options = new Option[]
+			{
+
+				new Option {ID = Guid.NewGuid(), Answer = "This is a test", IsCorrectAnswer = true, Order =  1, QuestionID = questionID},
+				new Option {ID = Guid.NewGuid(), Answer = "This is a test 2", IsCorrectAnswer = false, Order =  2, QuestionID = questionID},
+			};
+			Question question = new Question { ID = questionID, Complexity = 1, Number = 1, QuestionText = "This is a test", SectionID = Guid.NewGuid(), Type = Areas.M.Models.QuestionType.SingleSelect, Options = options };
+
+			ValidationError[] errors = new ValidationError[] {
+				new ValidationError { Message = "This is a test!" },
+				new ValidationError { Message = "This is another Test!" }
+			};
+
+			questionController.Request = new HttpRequestMessage(HttpMethod.Post, "api/Question/");
+			questionController.Configuration = new HttpConfiguration();
+
+			questionServiceMock.Setup(x => x.AddQuestionAsync(It.Is<Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail>(s => (HaveEqualState(s, question))))).Returns(Task.FromResult(errors));
+
+			IHttpActionResult actionResult = await questionController.Post(question);
+
+			BadRequestErrorMessageResult response = (BadRequestErrorMessageResult)actionResult;
+
+			Assert.AreEqual(typeof(BadRequestErrorMessageResult), actionResult.GetType());
+			Assert.AreEqual("This is a test!, This is another Test!", response.Message);
 		}
 
 		[TestMethod]

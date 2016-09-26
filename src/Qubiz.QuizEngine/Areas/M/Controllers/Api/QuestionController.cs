@@ -22,7 +22,7 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		public async Task<IHttpActionResult> Get(int pageNumber, int itemsPerPage)
 		{
 			Qubiz.QuizEngine.Services.Common.Contract.PagedResult<Qubiz.QuizEngine.Services.Question.Contract.QuestionListItem> questions = await questionService.GetQuestionsByPageAsync(pageNumber, itemsPerPage);
-			if (questions.Items == null && questions.TotalCount == 0)
+			if (questions.Items.Length == 0 && questions.TotalCount == 0)
 			{
 				HttpResponseMessage message = new HttpResponseMessage();
 				message.StatusCode = System.Net.HttpStatusCode.NoContent;
@@ -35,7 +35,12 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 		public async Task<IHttpActionResult> Get(Guid id)
 		{
 			Qubiz.QuizEngine.Services.Question.Contract.QuestionDetail question = await questionService.GetQuestionByID(id);
-
+			if (question == null)
+			{
+				HttpResponseMessage response = new HttpResponseMessage();
+				response.StatusCode = System.Net.HttpStatusCode.NoContent;
+				return ResponseMessage(response);
+			}
 			return Ok(question.DeepCopyTo<Question>());
 		}
 
@@ -50,6 +55,11 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 				{
 					foreach (ValidationError error in errors)
 					{
+						if(errors.Last().Message.Equals(error.Message))
+						{
+							errorMessage += error.Message;
+							continue;
+						}
 						errorMessage += error.Message + ", ";
 					}
 					return BadRequest(errorMessage);
@@ -72,6 +82,11 @@ namespace Qubiz.QuizEngine.Areas.M.Controllers.Api
 				{
 					foreach (ValidationError error in errors)
 					{
+						if (errors.Last().Message.Equals(error.Message))
+						{
+							errorMessage += error.Message;
+							continue;
+						}
 						errorMessage += error.Message + ", ";
 					}
 					return BadRequest(errorMessage);
