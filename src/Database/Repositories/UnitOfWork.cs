@@ -1,4 +1,8 @@
-﻿using Qubiz.QuizEngine.Database.Repositories.Section;
+﻿using Qubiz.QuizEngine.Database.Repositories.Option;
+using Qubiz.QuizEngine.Database.Repositories.Option.Contract;
+using Qubiz.QuizEngine.Database.Repositories.Question;
+using Qubiz.QuizEngine.Database.Repositories.Question.Contract;
+using Qubiz.QuizEngine.Database.Repositories.Section;
 using Qubiz.QuizEngine.Database.Repositories.Section.Contract;
 using Qubiz.QuizEngine.Infrastructure;
 using System;

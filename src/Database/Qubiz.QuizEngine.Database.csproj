@@ -76,8 +76,8 @@
       <DependentUpon>201509020904036_113_Add_FeatureFlag_Table.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\OptionDefinition.cs" />
-    <Compile Include="Models\QuestionDefinition.cs" />
+    <Compile Include="Repositories\Option\Contract\OptionDefinition.cs" />
+    <Compile Include="Repositories\Question\Contract\QuestionDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuizEngineDataContext.cs" />
     <Compile Include="Repositories\Admin\AdminRepository.cs" />
@@ -89,9 +89,9 @@
     <Compile Include="Repositories\FeatureFlag\IFeatureFlagRepository.cs" />
     <Compile Include="Repositories\IBaseRepository.cs" />
     <Compile Include="Repositories\IUnitOfWork.cs" />
-    <Compile Include="Repositories\Question\IOptionRepository.cs" />
-    <Compile Include="Repositories\Question\OptionRepository.cs" />
-    <Compile Include="Repositories\Question\IQuestionRepository.cs" />
+    <Compile Include="Repositories\Option\Contract\IOptionRepository.cs" />
+    <Compile Include="Repositories\Option\OptionRepository.cs" />
+    <Compile Include="Repositories\Question\Contract\IQuestionRepository.cs" />
     <Compile Include="Repositories\Question\QuestionRepository.cs" />
     <Compile Include="Repositories\Section\Contract\ISectionRepository.cs" />
     <Compile Include="Repositories\Section\SectionRepository.cs" />
@@ -125,6 +125,7 @@
       <DependentUpon>201509020904036_113_Add_FeatureFlag_Table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

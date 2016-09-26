@@ -1,12 +1,10 @@
-﻿using Qubiz.QuizEngine.Database.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Qubiz.QuizEngine.Database.Repositories
+namespace Qubiz.QuizEngine.Database.Repositories.Option.Contract
 {
-    public interface IOptionRepository
+	public interface IOptionRepository
     {
         void AddOptionsAsync(OptionDefinition[] options);
         void UpdateOptionsAsync(OptionDefinition[] options);

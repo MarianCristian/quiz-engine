@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Qubiz.QuizEngine.Database.Models
+namespace Qubiz.QuizEngine.Database.Repositories.Option.Contract
 {
-    public class OptionDefinition
+	public class OptionDefinition
     {
         public Guid ID { get; set; }
 

@@ -1,13 +1,13 @@
-﻿using Qubiz.QuizEngine.Database.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Qubiz.QuizEngine.Infrastructure;
+using Qubiz.QuizEngine.Database.Repositories.Question.Contract;
 
-namespace Qubiz.QuizEngine.Database.Repositories
+namespace Qubiz.QuizEngine.Database.Repositories.Question
 {
-    public class QuestionRepository : BaseRepository<Entities.QuestionDefinition>, IQuestionRepository
+	public class QuestionRepository : BaseRepository<Entities.QuestionDefinition>, IQuestionRepository
     {
         public QuestionRepository(QuizEngineDataContext context, UnitOfWork unitOfWork)
             : base(context, unitOfWork)
