@@ -44,7 +44,7 @@ namespace Qubiz.QuizEngine.Database.Repositories
 			{
 				if (questionRepository == null)
 				{
-					questionRepository = new QuestionRepository(dbContext, this);
+					questionRepository = new QuestionRepository(dbContext);
 				}
 
 				return questionRepository;
@@ -57,7 +57,7 @@ namespace Qubiz.QuizEngine.Database.Repositories
 			{
 				if (optionRepository == null)
 				{
-					optionRepository = new OptionRepository(dbContext, this);
+					optionRepository = new OptionRepository(dbContext);
 				}
 
 				return optionRepository;

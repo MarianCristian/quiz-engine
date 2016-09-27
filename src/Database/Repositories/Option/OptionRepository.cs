@@ -1,4 +1,5 @@
 ﻿using Qubiz.QuizEngine.Database.Repositories.Option.Contract;
+using Qubiz.QuizEngine.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -7,11 +8,14 @@ using System.Threading.Tasks;
 
 namespace Qubiz.QuizEngine.Database.Repositories.Option
 {
-	public class OptionRepository : BaseRepository<Entities.OptionDefinition>, IOptionRepository
+	public class OptionRepository : IOptionRepository
 	{
-		public OptionRepository(QuizEngineDataContext context, UnitOfWork unitOfWork)
-			: base(context, unitOfWork)
-		{ }
+		private DbSet<Entities.OptionDefinition> dbSet;
+		public OptionRepository(QuizEngineDataContext context)
+		{
+			this.dbSet = context.Set<Entities.OptionDefinition>();
+		}
+
 
 		public void DeleteOptionsAsync(OptionDefinition[] options)
 		{
@@ -25,7 +29,8 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToArray();
 			foreach (var option in entityOptions)
 			{
-				Delete(option);
+				dbSet.Attach(option);
+				dbSet.Remove(option);
 			}
 		}
 
@@ -53,7 +58,8 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToArray();
 			foreach (var option in entityOptions)
 			{
-				Upsert(option);
+				Entities.OptionDefinition existingOption = dbSet.Find(option.ID);
+				Mapper.Map(existingOption, option);
 			}
 		}
 
@@ -69,7 +75,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToArray();
 			foreach (var option in entityOptions)
 			{
-				Create(option);
+				dbSet.Add(option);
 			}
 		}
 	}

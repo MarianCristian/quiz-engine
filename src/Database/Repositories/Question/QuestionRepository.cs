@@ -8,11 +8,13 @@ using System.Data.Entity;
 
 namespace Qubiz.QuizEngine.Database.Repositories.Question
 {
-	public class QuestionRepository : BaseRepository<Entities.QuestionDefinition>, IQuestionRepository
+	public class QuestionRepository : IQuestionRepository
 	{
-		public QuestionRepository(QuizEngineDataContext context, UnitOfWork unitOfWork)
-			: base(context, unitOfWork)
-		{ }
+		private DbSet<Entities.QuestionDefinition> dbSet;
+		public QuestionRepository(QuizEngineDataContext context)
+		{
+			this.dbSet = context.Set<Entities.QuestionDefinition>();
+		}
 
 		public async Task<IEnumerable<QuestionDefinition>> GetQuestionsAsync()
 		{
@@ -40,20 +42,20 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question
 			}).FirstOrDefaultAsync();
 		}
 
-		public void UpdateQuestionAsync(QuestionDefinition question)
+		public void Upsert(QuestionDefinition question)
 		{
-			Upsert(question.DeepCopyTo<Entities.QuestionDefinition>());
+			Entities.QuestionDefinition dbQuestion = dbSet.Find(question.ID);
+			if (dbQuestion == null)
+			{
+				dbSet.Add(question.DeepCopyTo<Entities.QuestionDefinition>());
+			}
+			Mapper.Map(question, dbQuestion);
 		}
 
-		public void AddQuestionAsync(QuestionDefinition question)
+		public void Delete(Guid id)
 		{
-			Create(question.DeepCopyTo<Entities.QuestionDefinition>());
-		}
-
-		public async Task DeleteQuestionAsync(Guid id)
-		{
-			Entities.QuestionDefinition question = await dbSet.Where(i => i.ID == id).FirstOrDefaultAsync();
-			Delete(question);
+			Entities.QuestionDefinition question = dbSet.Find(id);
+			dbSet.Remove(question);
 		}
 	}
 }

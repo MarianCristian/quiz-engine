@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 namespace Qubiz.QuizEngine.Database.Repositories.Question.Contract
 {
 	public interface IQuestionRepository
-    {
-        void AddQuestionAsync(QuestionDefinition question);
-        void UpdateQuestionAsync(QuestionDefinition question);
+	{
+		void Upsert(QuestionDefinition question);
 
-        Task DeleteQuestionAsync(Guid id);
+		void Delete(Guid id);
 
 		Task<IEnumerable<QuestionDefinition>> GetQuestionsAsync();
 
-        Task<QuestionDefinition> GetQuestionByIDAsync(Guid id);
+		Task<QuestionDefinition> GetQuestionByIDAsync(Guid id);
 	}
 }

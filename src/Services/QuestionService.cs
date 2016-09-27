@@ -21,7 +21,7 @@ namespace Qubiz.QuizEngine.Services
 		{
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
-				await unitOfWork.QuestionRepository.DeleteQuestionAsync(id);
+				unitOfWork.QuestionRepository.Delete(id);
 				IEnumerable<Database.Repositories.Option.Contract.OptionDefinition> options = await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(id);
 				unitOfWork.OptionRepository.DeleteOptionsAsync(options.ToArray());
 				await unitOfWork.SaveAsync();
@@ -51,7 +51,7 @@ namespace Qubiz.QuizEngine.Services
 		{
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
-				unitOfWork.QuestionRepository.UpdateQuestionAsync(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
+				unitOfWork.QuestionRepository.Upsert(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
 				unitOfWork.OptionRepository.DeleteOptionsAsync((await unitOfWork.OptionRepository.GetOptionsByQuestionIDAsync(question.ID)).ToArray());
 				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
 				{
@@ -69,7 +69,7 @@ namespace Qubiz.QuizEngine.Services
 		{
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
-				unitOfWork.QuestionRepository.AddQuestionAsync(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
+				unitOfWork.QuestionRepository.Upsert(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
 				unitOfWork.OptionRepository.AddOptionsAsync(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
 				{
 					Answer = o.Answer,
