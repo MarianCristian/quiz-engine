@@ -29,7 +29,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question
 			}).ToListAsync();
 		}
 
-		public async Task<QuestionDefinition> ListByIDAsync(Guid id)
+		public async Task<QuestionDefinition> GetByIDAsync(Guid id)
 		{
 			return await dbSet.Where(q => q.ID == id).Select(q => new QuestionDefinition
 			{

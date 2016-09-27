@@ -12,6 +12,6 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question.Contract
 
 		Task<IEnumerable<QuestionDefinition>> List();
 
-		Task<QuestionDefinition> ListByIDAsync(Guid id);
+		Task<QuestionDefinition> GetByIDAsync(Guid id);
 	}
 }
