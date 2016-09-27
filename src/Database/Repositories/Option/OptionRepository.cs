@@ -17,7 +17,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 		}
 
 
-		public void DeleteOptionsAsync(OptionDefinition[] options)
+		public void Delete(OptionDefinition[] options)
 		{
 			Entities.OptionDefinition[] entityOptions = options.Select(o => new Entities.OptionDefinition
 			{
@@ -34,7 +34,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}
 		}
 
-		public async Task<IEnumerable<OptionDefinition>> GetOptionsByQuestionIDAsync(Guid id)
+		public async Task<IEnumerable<OptionDefinition>> ListByQuestionIDAsync(Guid id)
 		{
 			return await dbSet.Where(o => o.QuestionID == id).OrderBy(o => o.Order).Select(o => new OptionDefinition
 			{
@@ -46,7 +46,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToListAsync();
 		}
 
-		public void UpdateOptionsAsync(OptionDefinition[] options)
+		public void Update(OptionDefinition[] options)
 		{
 			Entities.OptionDefinition[] entityOptions = options.Select(o => new Entities.OptionDefinition
 			{
@@ -63,7 +63,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}
 		}
 
-		public void AddOptionsAsync(OptionDefinition[] options)
+		public void Add(OptionDefinition[] options)
 		{
 			Entities.OptionDefinition[] entityOptions = options.Select(o => new Entities.OptionDefinition
 			{

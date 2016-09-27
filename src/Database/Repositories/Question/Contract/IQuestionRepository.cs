@@ -10,8 +10,8 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question.Contract
 
 		void Delete(Guid id);
 
-		Task<IEnumerable<QuestionDefinition>> GetQuestionsAsync();
+		Task<IEnumerable<QuestionDefinition>> List();
 
-		Task<QuestionDefinition> GetQuestionByIDAsync(Guid id);
+		Task<QuestionDefinition> ListByIDAsync(Guid id);
 	}
 }

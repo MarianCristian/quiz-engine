@@ -16,7 +16,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question
 			this.dbSet = context.Set<Entities.QuestionDefinition>();
 		}
 
-		public async Task<IEnumerable<QuestionDefinition>> GetQuestionsAsync()
+		public async Task<IEnumerable<QuestionDefinition>> List()
 		{
 			return await dbSet.Select(q => new QuestionDefinition
 			{
@@ -29,7 +29,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Question
 			}).ToListAsync();
 		}
 
-		public async Task<QuestionDefinition> GetQuestionByIDAsync(Guid id)
+		public async Task<QuestionDefinition> ListByIDAsync(Guid id)
 		{
 			return await dbSet.Where(q => q.ID == id).Select(q => new QuestionDefinition
 			{
