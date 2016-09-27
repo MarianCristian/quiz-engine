@@ -33,7 +33,7 @@ namespace Qubiz.QuizEngine.Services
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
 				//List<Database.Models.QuestionDefinition> list = new List<Database.Models.QuestionDefinition>();
-				QuestionDetail question = (await unitOfWork.QuestionRepository.ListByIDAsync(id)).DeepCopyTo<QuestionDetail>();
+				QuestionDetail question = (await unitOfWork.QuestionRepository.GetByIDAsync(id)).DeepCopyTo<QuestionDetail>();
 				IEnumerable<Database.Repositories.Option.Contract.OptionDefinition> options = await unitOfWork.OptionRepository.ListByQuestionIDAsync(id);
 				question.Options = options.Select(o => new OptionDefinition
 				{
