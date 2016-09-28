@@ -53,7 +53,7 @@ namespace Qubiz.QuizEngine.Services
 			{
 				unitOfWork.QuestionRepository.Upsert(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
 				unitOfWork.OptionRepository.Delete((await unitOfWork.OptionRepository.ListByQuestionIDAsync(question.ID)).ToArray());
-				unitOfWork.OptionRepository.Add(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
+				unitOfWork.OptionRepository.Upsert(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
 				{
 					Answer = o.Answer,
 					ID = o.ID,
@@ -70,7 +70,7 @@ namespace Qubiz.QuizEngine.Services
 			using (IUnitOfWork unitOfWork = unitOfWorkFactory.Create())
 			{
 				unitOfWork.QuestionRepository.Upsert(question.DeepCopyTo<Database.Repositories.Question.Contract.QuestionDefinition>());
-				unitOfWork.OptionRepository.Add(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
+				unitOfWork.OptionRepository.Upsert(question.Options.Select(o => new Database.Repositories.Option.Contract.OptionDefinition
 				{
 					Answer = o.Answer,
 					ID = o.ID,

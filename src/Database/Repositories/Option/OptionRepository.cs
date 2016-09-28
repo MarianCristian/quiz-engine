@@ -29,6 +29,12 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToArray();
 			foreach (var option in entityOptions)
 			{
+				Entities.OptionDefinition dbOption = dbSet.Find(option.ID);
+				if (dbOption != null)
+				{
+					dbSet.Remove(dbOption);
+					continue;
+				}
 				dbSet.Attach(option);
 				dbSet.Remove(option);
 			}
@@ -46,7 +52,7 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			}).ToListAsync();
 		}
 
-		public void Update(OptionDefinition[] options)
+		public void Upsert(OptionDefinition[] options)
 		{
 			Entities.OptionDefinition[] entityOptions = options.Select(o => new Entities.OptionDefinition
 			{
@@ -59,22 +65,11 @@ namespace Qubiz.QuizEngine.Database.Repositories.Option
 			foreach (var option in entityOptions)
 			{
 				Entities.OptionDefinition existingOption = dbSet.Find(option.ID);
-				Mapper.Map(existingOption, option);
-			}
-		}
-
-		public void Add(OptionDefinition[] options)
-		{
-			Entities.OptionDefinition[] entityOptions = options.Select(o => new Entities.OptionDefinition
-			{
-				Answer = o.Answer,
-				ID = o.ID,
-				IsCorrectAnswer = o.IsCorrectAnswer,
-				Order = o.Order,
-				QuestionID = o.QuestionID
-			}).ToArray();
-			foreach (var option in entityOptions)
-			{
+				if (existingOption != null)
+				{
+					Mapper.Map(option, existingOption);
+					dbSet.Remove(existingOption);
+				}
 				dbSet.Add(option);
 			}
 		}
