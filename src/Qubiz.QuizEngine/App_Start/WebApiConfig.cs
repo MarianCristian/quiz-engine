@@ -21,7 +21,7 @@ namespace Qubiz.QuizEngine
 
             config.Routes.MapHttpRoute(
                 name: "ActionApi",
-                routeTemplate: "api/{controller}/{action}");
+                routeTemplate: "a/{controller}/{action}");
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
