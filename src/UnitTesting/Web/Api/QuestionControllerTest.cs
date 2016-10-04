@@ -213,14 +213,5 @@ namespace Qubiz.QuizEngine.UnitTesting.Web.Api
 			Assert.AreEqual(expected.Answer, actual.Answer);
 		}
 
-		private bool HaveEqualState(Qubiz.QuizEngine.Services.Models.QuestionDetail expected, Question actual)
-		{
-			return expected.ID == actual.ID
-				&& expected.Number == actual.Number
-				&& expected.QuestionText == actual.QuestionText
-				&& expected.SectionID == actual.SectionID
-				&& expected.Type.ToString() == actual.Type.ToString()
-				&& expected.Options.Length == actual.Options.Length;
-		}
-	}
+	
 }
