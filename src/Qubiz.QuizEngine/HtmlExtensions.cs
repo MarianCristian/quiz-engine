@@ -26,11 +26,5 @@ namespace Qubiz.QuizEngine
 
         public static string EnumToJsonObject<TEnum>()
         {
-            Dictionary<int, string> types = Enum.GetValues(typeof(TEnum)).Cast<Enum>().ToDictionary(e => Convert.ToInt32(e), e => e.ToString());
-
-            var entries = types.Select(d => string.Format("{0}: \"{1}\"", d.Key, string.Join(",", d.Value)));
-            return "{" + string.Join(",", entries) + "}";
-        }
-
-    }
+          
 }
