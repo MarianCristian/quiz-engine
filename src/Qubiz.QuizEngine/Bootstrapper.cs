@@ -19,16 +19,7 @@ namespace Qubiz.QuizEngine
 		{
 			var container = BuildUnityContainer();
 			GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(container);
-			DependencyResolver.SetResolver(new UnityDependencyResolver(container));
-
-			return container;
-		}
-
-		private static IUnityContainer BuildUnityContainer()
-		{
-			var container = new UnityContainer();
-
-			RegisterTypes(container);
+			DependencyRaasdsadadsasdsadasdsdsa
 
 			return container;
 		}
